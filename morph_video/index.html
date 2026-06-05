@@ -457,12 +457,13 @@
     import { FilesetResolver, FaceLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest";
     import Delaunator from "https://cdn.jsdelivr.net/npm/delaunator@5/+esm";
 
-    const OUTPUT_WIDTH = 300;
-    const OUTPUT_HEIGHT = 400;
+    const OUTPUT_WIDTH = 600;
+    const OUTPUT_HEIGHT = 800;
     const OUTPUT_RATIO = OUTPUT_WIDTH / OUTPUT_HEIGHT;
     const LANDMARK_REFRESH_MS = 120;
     const MIN_VIDEO_TIME_DELTA = 1 / 120;
     const EXPORT_FPS = 15;
+    const VIDEO_BITRATE = 8_000_000;
     const MOV_MIME_TYPE_CANDIDATES = [
       "video/quicktime",
       "video/mp4;codecs=avc1.42E01E",
@@ -911,6 +912,8 @@
       targetCanvas.height = OUTPUT_HEIGHT;
       const { sx, sy, sw, sh } = getCenteredCropRect(srcWidth, srcHeight, OUTPUT_RATIO);
       const ctx = targetCanvas.getContext("2d");
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
       ctx.clearRect(0, 0, OUTPUT_WIDTH, OUTPUT_HEIGHT);
       ctx.drawImage(source, sx, sy, sw, sh, 0, 0, OUTPUT_WIDTH, OUTPUT_HEIGHT);
     }
@@ -1006,6 +1009,8 @@
       }
 
       const ctx = canvas.getContext("2d");
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
       ctx.clearRect(0, 0, OUTPUT_WIDTH, OUTPUT_HEIGHT);
       return ctx;
     }
@@ -1267,7 +1272,7 @@
         setCaptureOverlay(key, "", "");
         setRecordButtonLabel(key, "撮影中");
 
-        const recorder = new MediaRecorder(stream, { mimeType });
+        const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: VIDEO_BITRATE });
         const chunks = [];
         const stopped = new Promise((resolve, reject) => {
           recorder.addEventListener("stop", resolve, { once: true });
@@ -1350,7 +1355,7 @@
       exportCanvas.width = OUTPUT_WIDTH;
       exportCanvas.height = OUTPUT_HEIGHT;
       const stream = exportCanvas.captureStream(EXPORT_FPS);
-      const recorder = new MediaRecorder(stream, { mimeType });
+      const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: VIDEO_BITRATE });
       const chunks = [];
       const frameDurationMs = 1000 / EXPORT_FPS;
       const totalFrames = Math.max(1, Math.ceil(duration * EXPORT_FPS));
@@ -1446,7 +1451,7 @@
       const frameDurationMs = 1000 / EXPORT_FPS;
       const totalFrames = Math.max(1, Math.ceil(duration * EXPORT_FPS));
       const stream = resultCanvas.captureStream(EXPORT_FPS);
-      const recorder = new MediaRecorder(stream, { mimeType });
+      const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: VIDEO_BITRATE });
       const chunks = [];
 
       recorder.addEventListener("dataavailable", (event) => {

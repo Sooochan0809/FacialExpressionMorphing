@@ -377,8 +377,8 @@
     import { FilesetResolver, FaceLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest";
     import Delaunator from "https://cdn.jsdelivr.net/npm/delaunator@5/+esm";
 
-    const OUTPUT_WIDTH = 300;
-    const OUTPUT_HEIGHT = 400;
+    const OUTPUT_WIDTH = 600;
+    const OUTPUT_HEIGHT = 800;
     const OUTPUT_RATIO = OUTPUT_WIDTH / OUTPUT_HEIGHT;
 
     const $ = (id) => document.getElementById(id);
@@ -654,6 +654,8 @@
       targetCanvas.width = OUTPUT_WIDTH;
       targetCanvas.height = OUTPUT_HEIGHT;
       const ctx = targetCanvas.getContext("2d");
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
       ctx.clearRect(0, 0, OUTPUT_WIDTH, OUTPUT_HEIGHT);
       return ctx;
     }
@@ -846,6 +848,8 @@
       }
 
       const ctx = canvas.getContext("2d");
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
       ctx.clearRect(0, 0, OUTPUT_WIDTH, OUTPUT_HEIGHT);
       return ctx;
     }
